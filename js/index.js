@@ -37,15 +37,15 @@ document.getElementById("btn-tuyen-sinh").onclick = function () {
   var diemMon3 = Number(tagID("diemMon3").value);
 
   var tong = tinhTong(diemMon1, diemMon2, diemMon3) + khuVuc + doiTuong;
-  var ketQua =
-    tong >= diemChuan
-      ? (ketQua = "Bạn đã đậu." + " Tổng điểm:" + tong)
+   
+  var  ketQua =0;
+  if (diemMon1 == 0 || diemMon2 == 0 || diemMon3 ==0  ){
+    ketQua = "Bạn đã Rớt! Do có điểm bằng 0." 
+  }else{
+    ketQua = tong >= diemChuan
+      ? (  ketQua = "Bạn đã đậu."+ " Tổng điểm:" + tong)
       : (ketQua = "Bạn đã Rớt." + " Tổng điểm:" + tong);
-  //   if (tong >= diemChuan) {
-  //     ketQua = "Bạn đã đậu." + " Tổng điểm:" + tong;
-  //   } else {
-  //     ketQua = "Bạn đã Rớt." + " Tổng điểm:" + tong;
-  //   }
+  }
   tagID("kqTuyenSinh").innerHTML = ketQua;
 };
 
