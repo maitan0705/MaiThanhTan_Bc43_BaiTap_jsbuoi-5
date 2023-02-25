@@ -37,14 +37,15 @@ document.getElementById("btn-tuyen-sinh").onclick = function () {
   var diemMon3 = Number(tagID("diemMon3").value);
 
   var tong = tinhTong(diemMon1, diemMon2, diemMon3) + khuVuc + doiTuong;
-   
-  var  ketQua =0;
-  if (diemMon1 == 0 || diemMon2 == 0 || diemMon3 ==0  ){
-    ketQua = "Bạn đã Rớt! Do có điểm bằng 0." 
-  }else{
-    ketQua = tong >= diemChuan
-      ? (  ketQua = "Bạn đã đậu."+ " Tổng điểm:" + tong)
-      : (ketQua = "Bạn đã Rớt." + " Tổng điểm:" + tong);
+
+  var ketQua = 0;
+  if (diemMon1 == 0 || diemMon2 == 0 || diemMon3 == 0) {
+    ketQua = "Bạn đã Rớt! Do có điểm bằng 0.";
+  } else {
+    ketQua =
+      tong >= diemChuan
+        ? (ketQua = "Bạn đã đậu." + " Tổng điểm:" + tong)
+        : (ketQua = "Bạn đã Rớt." + " Tổng điểm:" + tong);
   }
   tagID("kqTuyenSinh").innerHTML = ketQua;
 };
@@ -78,24 +79,45 @@ tagID("btn-thue").onclick = function () {
   var thuNhap = Number(tagID("thuNhap").value);
   var nguoiPhuThuoc = Number(tagID("nguoiPhuThuoc").value);
 
-  var ketQua = 0;
-  var thuNhapChiuThue = thueThuNhap(thuNhap, nguoiPhuThuoc);
-  if (thuNhap < 6000000) {
-    alert("Số tiền thu nhâp không hợ lệ!");
-  } else if (thuNhap <= 60000000) {
-    ketQua = (thuNhapChiuThue * 5) / 100;
-  } else if (thuNhap <= 120000000) {
-    ketQua = (thuNhapChiuThue * 10) / 100;
-  } else if (thuNhap <= 210000000) {
-    ketQua = (thuNhapChiuThue * 15) / 100;
-  } else if (thuNhap <= 384000000) {
-    ketQua = (thuNhapChiuThue * 20) / 100;
-  } else if (thuNhap <= 624000000) {
-    ketQua = (thuNhapChiuThue * 25) / 100;
-  } else if (thuNhap <= 960000000) {
-    ketQua = (thuNhapChiuThue * 30) / 100;
+  // Tính thu nhập chịu thuế
+  let thuNhapChiuThue = thuNhap - 4000 - nguoiPhuThuoc * 1600;
+
+  // Tính thuế thu nhập cá nhân
+  let thue = 0;
+  if (thuNhapChiuThue <= 0) {
+    thue = 0;
+  } else if (thuNhapChiuThue <= 60000000) {
+    thue = thuNhapChiuThue * 0.05;
+  } else if (thuNhapChiuThue <= 120000000) {
+    thue = 60000000 * 0.05 + (thuNhapChiuThue - 60000000) * 0.1;
+  } else if (thuNhapChiuThue <= 210000000) {
+    thue = 60000000 * 0.05 + 60000000 * 0.1 + (thuNhapChiuThue - 120000000) * 0.15;
+  } else if (thuNhapChiuThue <= 384000000) {
+    thue = 60000000 * 0.05 + 60000000 * 0.1 + 90000000 * 0.15 + (thuNhapChiuThue - 210000000) * 0.2;
+  } else if (thuNhapChiuThue <= 624000000) {
+    thue =
+      60000000 * 0.05 +
+      60000000 * 0.1 +
+      90000000 * 0.15 +
+      174000000 * 0.2 +
+      (thuNhapChiuThue - 384000000) * 0.25;
+  } else if (thuNhapChiuThue <= 960000000) {
+    thue =
+      60000000 * 0.05 +
+      60000000 * 0.1 +
+      90000000 * 0.15 +
+      174000000 * 0.2 +
+      240000000 * 0.25 +
+      (thuNhapChiuThue - 624000000) * 0.3;
   } else {
-    ketQua = (thuNhapChiuThue * 35) / 100;
+    thue =
+      60000000 * 0.05 +
+      60000000 * 0.1 +
+      90000000 * 0.15 +
+      174000000 * 0.2 +
+      240000000 * 0.25 +
+      336000000 * 0.3 +
+      (thuNhapChiuThue - 960000000) * 0.35;
   }
 
   tagID("kqTienThue").innerHTML =
@@ -103,15 +125,10 @@ tagID("btn-thue").onclick = function () {
     hoTen +
     ", " +
     "Tiền thuế thu nhập cá nhân:" +
-    ketQua.toLocaleString("de-DE") +
+    thue.toLocaleString("de-DE") +
     " VND";
 };
 
-function thueThuNhap(tienNam, soPhuthuoc) {
-  var chiuThue = 0;
-  chiuThue = tienNam - 4000000 - soPhuthuoc * 1600000;
-  return chiuThue;
-}
 // bai 4
 tagID("loaiKhachHang").onclick = function () {
   var khachHang = tagID("loaiKhachHang").value;
@@ -132,7 +149,11 @@ tagID("btn-tien-cap").onclick = function () {
   } else if (khachHang == 1) {
     ketQua = 25 + 7.5 * kenhCaoCap;
   } else {
-    ketQua = soCap <= 10 ? 90 + 50* kenhCaoCap : 90 + 50* kenhCaoCap +(soCap-10)*5;
+    ketQua =
+      soCap <= 10
+        ? 90 + 50 * kenhCaoCap
+        : 90 + 50 * kenhCaoCap + (soCap - 10) * 5;
   }
-  tagID('kqTienCap').innerHTML = 'Mã Khách Hàng: '+ maKH + '; '+'Tièn Cáp: $'+ ketQua.toFixed(2);
+  tagID("kqTienCap").innerHTML =
+    "Mã Khách Hàng: " + maKH + "; " + "Tièn Cáp: $" + ketQua.toFixed(2);
 };
